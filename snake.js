@@ -1,7 +1,22 @@
 const wallDiv = document.getElementsByClassName("wall")[0];
+
 // 蛇类
 function Snake() {
     this.body = [{ x: 30, y: 0 }, { x: 0, y: 0 }]
+}
+
+// 重置蛇
+Snake.prototype.reset = function() {
+    this.body = [{ x: 30, y: 0 }, { x: 0, y: 0 }]
+    $(".wall").empty();
+    for (let index = 0; index < this.body.length; index++) {
+        const ele = this.body[index];
+        if (index == 0) {
+            window.CreateElement(ele, "snakeHead")
+            continue
+        }
+        window.CreateElement(ele, "snake_body")
+    }
 }
 
 // 移动蛇
@@ -33,6 +48,8 @@ Snake.prototype.move = function(keyCode, step, food) {
     }
     if (this.body[0].x < 0 || this.body[0].x > 570 || this.body[0].y < 0 || this.body[0].y > 390) {
         alert("你个废物,玩死了！！")
+        this.reset();
+        food.setFoodPosition(3);
         return
     }
 
@@ -86,7 +103,12 @@ function Food(number, snake) {
     this.snake = snake;
     // 生成食物的坐标
     this.positions = [];
-    let exitArr = [].concat(snake.body);
+    this.setFoodPosition(number);
+}
+
+Food.prototype.setFoodPosition = function(number) {
+    this.positions = [];
+    let exitArr = [].concat(this.snake.body);
     // x:0~19 Y:0~13
     for (let index = 0; index < number; index++) {
         const po = {};
@@ -109,6 +131,7 @@ function Food(number, snake) {
     }
 }
 
+// 吃一个食物添加一个食物
 Food.prototype.add = function() {
     let exitArr = this.snake.body.concat(this.positions);
     let isAdded = false;
