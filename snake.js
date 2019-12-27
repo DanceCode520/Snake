@@ -1,6 +1,8 @@
 const wallDiv = document.getElementsByClassName("wall")[0];
+const snakeHead = document.getElementsByClassName("snakeHead")[0];
 let touchWallDead = true
 let eatSelfDead = true
+const foodNames = ["food1.png", "food2.png", "food3.png", "food4.png"]
     // 蛇类
 function Snake() {
     this.body = [{ x: 30, y: 0 }, { x: 0, y: 0 }]
@@ -34,9 +36,11 @@ Snake.prototype.move = function(keyCode, step, food) {
     switch (keyCode) {
         case 37: // 左
             this.body[0].x = this.body[0].x - step;
+            // snakeHead.style.transform = "rotate(180deg)";
             break;　　
         case 38: // 上
             this.body[0].y = this.body[0].y - step;
+            // snakeHead.style.transform = "rotate(180deg)";
             break;　　
         case 39: // 右
             this.body[0].x = this.body[0].x + step;
@@ -174,6 +178,11 @@ function CreateElement(ele, className) {
     div.style.left = ele.x + "px";
     div.style.top = ele.y + "px";
     div.setAttribute("class", className);
+    if (className == "food") {
+        const picName = foodNames[Math.floor(Math.random() * (foodNames.length - 1))];
+        div.style.background = `url(\"./imgs/${picName}\") no-repeat`;
+        div.style.backgroundSize = "100%";
+    }
     wallDiv.appendChild(div);
 }
 

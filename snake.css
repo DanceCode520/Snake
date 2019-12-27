@@ -23,11 +23,13 @@
     -moz-border-radius: 15px;
     -ms-border-radius: 15px;
     -o-border-radius: 15px;
+    background: url("./imgs/head.png") no-repeat;
+    background-size: 100%;
 }
 
 .snake_body {
     position: absolute;
-    background-color: grey;
+    background-color: #13227acc;
     width: 30px;
     height: 30px;
     border-radius: 15px;
