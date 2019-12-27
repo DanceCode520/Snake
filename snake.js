@@ -63,9 +63,9 @@ Snake.prototype.move = function(keyCode, step, food) {
             snakeHead.style.left = this.body[0].x + "px";
         }
     }
-    console.log(`last2:${lastBody}`)
 }
 
+// 吃到食物
 Snake.prototype.eatFood = function(food) {
     let positon = this.body[0];
     console.log(positon)
@@ -73,6 +73,7 @@ Snake.prototype.eatFood = function(food) {
         if (item.x == positon.x && item.y == positon.y) {
             console.log("eat food");
             food.positions = food.positions.filter(ele => { return (ele != item) })
+            food.add();
             return true;
         }
     }
@@ -80,22 +81,25 @@ Snake.prototype.eatFood = function(food) {
 }
 
 // 食物类
-function Food(number) {
+function Food(number, snake) {
 
+    this.snake = snake;
     // 生成食物的坐标
     this.positions = [];
+    let exitArr = [].concat(snake.body);
     // x:0~19 Y:0~13
     for (let index = 0; index < number; index++) {
         const po = {};
         po.x = Math.floor(Math.random() * 19) * 30;
         po.y = Math.floor(Math.random() * 13) * 30;
-        for (let j = 0; j < this.positions.length; j++) {
-            const ele = this.positions[j];
+        for (let j = 0; j < exitArr.length; j++) {
+            const ele = exitArr[j];
             if (po.x == ele.x && po.y == ele.y) {
                 index = index - 1;
                 break;
             }
         }
+        exitArr.push(po);
         this.positions.push(po);
     }
 
@@ -103,6 +107,26 @@ function Food(number) {
         const ele = this.positions[index];
         window.CreateElement(ele, "food");
     }
+}
+
+Food.prototype.add = function() {
+    let exitArr = this.snake.body.concat(this.positions);
+    let isAdded = false;
+    const po = {};
+    while (!isAdded) {
+        po.x = Math.floor(Math.random() * 19) * 30;
+        po.y = Math.floor(Math.random() * 13) * 30;
+        for (let j = 0; j < exitArr.length; j++) {
+            const ele = exitArr[j];
+            if (po.x == ele.x && po.y == ele.y) {
+                j == 0 ? 0 : j - 1;
+                break;
+            }
+        }
+        isAdded = true
+    }
+    window.CreateElement(po, "food");
+    this.positions.push(po);
 }
 
 function CreateElement(ele, className) {
@@ -127,7 +151,7 @@ $(document).ready(function() {
         }
     }())
 
-    let food = new Food(3);
+    let food = new Food(3, snake);
     // 判断键盘上下左右
     $(document).keydown(function(event) {　
         snake.move(event.keyCode, 30, food);
