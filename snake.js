@@ -1,6 +1,7 @@
 const wallDiv = document.getElementsByClassName("wall")[0];
-
-// 蛇类
+let touchWallDead = true
+let eatSelfDead = true
+    // 蛇类
 function Snake() {
     this.body = [{ x: 30, y: 0 }, { x: 0, y: 0 }]
 }
@@ -47,10 +48,23 @@ Snake.prototype.move = function(keyCode, step, food) {
             break;
     }
     if (this.body[0].x < 0 || this.body[0].x > 570 || this.body[0].y < 0 || this.body[0].y > 390) {
-        alert("你个废物,玩死了！！")
-        this.reset();
-        food.setFoodPosition(3);
-        return
+        if (touchWallDead) {
+            alert("你走道不看路！！前面有墙还走！！(͡° ͜ʖ ͡°)")
+            this.reset();
+            food.setFoodPosition(3);
+            return
+        }
+    }
+    if (eatSelfDead) {
+        for (let index = 1; index < this.body.length; index++) {
+            const ele = this.body[index];
+            if (ele.x == this.body[0].x && ele.y == this.body[0].y) {
+                alert("你饿疯了把！！怎么把自己给吃了！！(¬‿¬)")
+                this.reset();
+                food.setFoodPosition(3);
+                return
+            }
+        }
     }
 
     // 判断是否吃到食物
@@ -106,6 +120,7 @@ function Food(number, snake) {
     this.setFoodPosition(number);
 }
 
+// 设置食物位置
 Food.prototype.setFoodPosition = function(number) {
     this.positions = [];
     let exitArr = [].concat(this.snake.body);
@@ -152,8 +167,9 @@ Food.prototype.add = function() {
     this.positions.push(po);
 }
 
+
+// 创建元素
 function CreateElement(ele, className) {
-    const wallDiv = document.getElementsByClassName("wall")[0];
     let div = document.createElement("div");
     div.style.left = ele.x + "px";
     div.style.top = ele.y + "px";
@@ -180,5 +196,16 @@ $(document).ready(function() {
         snake.move(event.keyCode, 30, food);
     });
 
-
+    let clickNumber = 0;
+    $(".snakeHead").click(function(e) {
+        e.preventDefault();
+        clickNumber += 1;
+        console.log(`number:${clickNumber}`)
+        if (clickNumber == 2) {
+            touchWallDead = false
+        }
+        if (clickNumber == 6) {
+            eatSelfDead = false;
+        }
+    });
 });
